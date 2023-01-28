@@ -34,11 +34,11 @@ $.ajax({
 function getCurrentWeather(data) {
   var cityName = data.name;
   var currentDate = moment.unix(data.dt).format("DD/MM/YYYY");
-  var currentIconCode = data.weather[0].icon;
+  var currentIconID = data.weather[0].icon;
   var currentTemp =  "Temp: " + (data.main.temp - 273.15).toFixed(1) + "°C";
   var currentHum = "Humidity: " + data.main.humidity + "%";
   var currentWind = "Wind speed: " + data.wind.speed + " kph";
-  var currentData = [cityName, currentDate, currentIconCode, currentTemp, currentHum, currentWind];
+  var currentData = [cityName, currentDate, currentIconID, currentTemp, currentHum, currentWind];
   for (var i=0; i<currentData.length; i++){
     var container = $('<p>');
     container.append(currentData[i]);
@@ -54,4 +54,10 @@ function getFiveDays(data) {
       console.log(data.list[i]);
     }
   }
+}
+
+//function to get weather icon image
+function weatherIcon(ID) {
+  var imgURL = "http://openweathermap.org/img/wn/" + ID + "2x.png";
+  return imgURL;
 }
