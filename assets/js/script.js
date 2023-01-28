@@ -33,12 +33,20 @@ $.ajax({
 //TODO City name, date and icon should be on one line header
 function getCurrentWeather(data) {
   var cityName = data.name;
-  var currentDate = moment.unix(data.dt).format("DD/MM/YYYY");
+  var currentDate = moment.unix(data.dt).format("(DD/MM/YYYY)");
   var currentIconID = data.weather[0].icon;
   var currentTemp =  "Temp: " + (data.main.temp - 273.15).toFixed(1) + "°C";
   var currentHum = "Humidity: " + data.main.humidity + "%";
   var currentWind = "Wind speed: " + data.wind.speed + " kph";
-  var currentData = [cityName, currentDate, currentIconID, currentTemp, currentHum, currentWind];
+
+  var currentIconEl = $("<img src=" + weatherIcon(currentIconID) + " style='display:inline'>");
+
+  var currentWeatherEl = $("<h2 style='display:inline'>");
+  currentWeatherEl.text(cityName + ' ' + currentDate);
+  $("#today").append(currentWeatherEl);
+  $("#today").append(currentIconEl);
+
+  var currentData = [currentTemp, currentHum, currentWind];
   for (var i=0; i<currentData.length; i++){
     var container = $('<p>');
     container.append(currentData[i]);
@@ -58,6 +66,6 @@ function getFiveDays(data) {
 
 //function to get weather icon image
 function weatherIcon(ID) {
-  var imgURL = "http://openweathermap.org/img/wn/" + ID + "2x.png";
+  var imgURL = "http://openweathermap.org/img/wn/" + ID + "@2x.png";
   return imgURL;
 }
