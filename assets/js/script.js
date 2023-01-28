@@ -16,24 +16,27 @@ $.ajax({
       method: "GET"
     }).then(function(response) {
       console.log(response);
-      var todayArr = response.list[0];
-      var cityName = response.city.name;
-      var currentDate = todayArr.dt_txt;
-      var currentIconCode = todayArr.weather[0].icon;
-      var currentTemp = (todayArr.main.temp - 273.15).toFixed(1);
-      var currentHum = todayArr.main.humidity;
-      var currentWind = todayArr.wind.speed;
-      var currentData = [cityName, currentDate, currentIconCode, currentTemp, currentHum, currentWind];
-      for (var i=0; i<currentData.length; i++){
-        var container = $('<p>');
-        container.append(currentData[i]);
-        $('#today').append(container);
-      }
-
+      getCurrentWeather(response);
       getFiveDays(response);
     })
 
 })
+
+function getCurrentWeather(data) {
+  var current = data.list[0];
+  var cityName = data.city.name;
+  var currentDate = current.dt_txt;
+  var currentIconCode = current.weather[0].icon;
+  var currentTemp =  (current.main.temp - 273.15).toFixed(1);
+  var currentHum = current.main.humidity;
+  var currentWind = current.wind.speed;
+  var currentData = [cityName, currentDate, currentIconCode, currentTemp, currentHum, currentWind];
+  for (var i=0; i<currentData.length; i++){
+    var container = $('<p>');
+    container.append(currentData[i]);
+    $('#today').append(container);
+  }
+}
 
 //function to retrieve the midday weather data for the next 5 days
 function getFiveDays(data) {
