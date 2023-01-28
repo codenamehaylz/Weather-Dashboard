@@ -16,21 +16,19 @@ $.ajax({
       url: "https://api.openweathermap.org/data/2.5/weather?lat=" + cityLat + "&lon=" + cityLon + "&appid=" + APIKey,
       method: "GET"
     }).then(function(currentResponse) {
-      console.log(currentResponse);
       getCurrentWeather(currentResponse);
     })
     //for the next five days
     $.ajax({
       url: "http://api.openweathermap.org/data/2.5/forecast?lat=" + cityLat + "&lon=" + cityLon + "&appid=" + APIKey,
       method: "GET"
-    }).then(function(response) {
-      console.log(response);
-      getFiveDays(response);
+    }).then(function(fiveDayResponse) {
+      getFiveDays(fiveDayResponse);
     })
 
 })
 
-//TODO City name, date and icon should be on one line header
+//function to display the current weather information
 function getCurrentWeather(data) {
   var cityName = data.name;
   var currentDate = moment.unix(data.dt).format("(DD/MM/YYYY)");
@@ -48,20 +46,41 @@ function getCurrentWeather(data) {
 
   var currentData = [currentTemp, currentHum, currentWind];
   for (var i=0; i<currentData.length; i++){
-    var container = $('<p>');
-    container.append(currentData[i]);
-    $('#today').append(container);
+    var currentContainer = $('<p>');
+    currentContainer.append(currentData[i]);
+    $('#today').append(currentContainer);
   }
 }
 
-//function to retrieve the midday weather data for the next 5 days
+//function to retrieve & display the midday weather data for the next 5 days
 function getFiveDays(data) {
+  var fiveDayArray = [];
   for (var i=0; i<data.list.length; i++){
     var date = data.list[i].dt_txt;
     if (date.includes("12:00:00")){
-      console.log(data.list[i]);
+      fiveDayArray.push(data.list[i]);
     }
   }
+  fiveDayArray.forEach(function(day){
+    var dayContainer = $('<div>');
+    var date = moment.unix(day.dt).format("DD/MM/YYYY");
+    var dateEl = $('<h3>');
+    dateEl.text(date);
+    dayContainer.append(dateEl);
+    var dayIconID = day.weather[0].icon;
+    var dayIconEl = $("<img src=" + weatherIcon(dayIconID) + ">");
+    dayContainer.append(dayIconEl);
+    var temp =  "Temp: " + (day.main.temp - 273.15).toFixed(1) + "°C";
+    var humidity = "Humidity: " + day.main.humidity + "%";
+    var wind = "Wind speed: " + day.wind.speed + " kph";
+    var daysData = [temp, humidity, wind];
+    for (var j=0; j<daysData.length; j++){
+      var dayTextContainer = $('<p>');
+      dayTextContainer.text(daysData[j]);
+      dayContainer.append(dayTextContainer);
+    }
+    $('#forecast').append(dayContainer);
+  })
 }
 
 //function to get weather icon image
