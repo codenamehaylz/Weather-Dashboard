@@ -36,11 +36,11 @@ $.ajax({
 })
 
 //function to retrieve the midday weather data for the next 5 days
-function getFiveDays(dataArr) {
-  for (var i=0; i<dataArr.list.length; i++){
-    var date = dataArr.list[i].dt_txt;
+function getFiveDays(data) {
+  for (var i=0; i<data.list.length; i++){
+    var date = data.list[i].dt_txt;
     if (date.includes("12:00:00")){
-      console.log(dataArr.list[i]);
+      console.log(data.list[i]);
     }
   }
 }
