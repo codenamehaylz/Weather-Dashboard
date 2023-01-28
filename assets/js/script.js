@@ -7,29 +7,37 @@ var city = "London";
 $.ajax({
   url: "http://api.openweathermap.org/geo/1.0/direct?q=" + city + "&limit=1&appid=" + APIKey,
   method: "GET"
-}).then(function(response) {
-    var cityLat = response[0].lat;
-    var cityLon = response[0].lon;
-    //AJAX call using the coordinates to get the forecast data
+}).then(function(coordResponse) {
+    var cityLat = coordResponse[0].lat;
+    var cityLon = coordResponse[0].lon;
+    //AJAX calls using the coordinates to get the forecast data
+    //for the current weather
+    $.ajax({
+      url: "https://api.openweathermap.org/data/2.5/weather?lat=" + cityLat + "&lon=" + cityLon + "&appid=" + APIKey,
+      method: "GET"
+    }).then(function(currentResponse) {
+      console.log(currentResponse);
+      getCurrentWeather(currentResponse);
+    })
+    //for the next five days
     $.ajax({
       url: "http://api.openweathermap.org/data/2.5/forecast?lat=" + cityLat + "&lon=" + cityLon + "&appid=" + APIKey,
       method: "GET"
     }).then(function(response) {
       console.log(response);
-      getCurrentWeather(response);
       getFiveDays(response);
     })
 
 })
 
+//TODO City name, date and icon should be on one line header
 function getCurrentWeather(data) {
-  var current = data.list[0];
-  var cityName = data.city.name;
-  var currentDate = current.dt_txt;
-  var currentIconCode = current.weather[0].icon;
-  var currentTemp =  (current.main.temp - 273.15).toFixed(1);
-  var currentHum = current.main.humidity;
-  var currentWind = current.wind.speed;
+  var cityName = data.name;
+  var currentDate = moment.unix(data.dt).format("DD/MM/YYYY");
+  var currentIconCode = data.weather[0].icon;
+  var currentTemp =  "Temp: " + (data.main.temp - 273.15).toFixed(1) + "°C";
+  var currentHum = "Humidity: " + data.main.humidity + "%";
+  var currentWind = "Wind speed: " + data.wind.speed + " kph";
   var currentData = [cityName, currentDate, currentIconCode, currentTemp, currentHum, currentWind];
   for (var i=0; i<currentData.length; i++){
     var container = $('<p>');
