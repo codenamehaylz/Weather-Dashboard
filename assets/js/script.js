@@ -1,32 +1,39 @@
 var APIKey = "e74bf8be05c5eedb9d4a56d89339e903";
 
-//TODO city variable should be whatever user inputs
-var city = "London";
+$("#search-button").on("click", function(event) {
 
-// AJAX call to find the city's co-ordinates
-$.ajax({
-  url: "http://api.openweathermap.org/geo/1.0/direct?q=" + city + "&limit=1&appid=" + APIKey,
-  method: "GET"
-}).then(function(coordResponse) {
-    var cityLat = coordResponse[0].lat;
-    var cityLon = coordResponse[0].lon;
-    //AJAX calls using the coordinates to get the forecast data
-    //for the current weather
-    $.ajax({
-      url: "https://api.openweathermap.org/data/2.5/weather?lat=" + cityLat + "&lon=" + cityLon + "&appid=" + APIKey,
-      method: "GET"
-    }).then(function(currentResponse) {
-      getCurrentWeather(currentResponse);
-    })
-    //for the next five days
-    $.ajax({
-      url: "http://api.openweathermap.org/data/2.5/forecast?lat=" + cityLat + "&lon=" + cityLon + "&appid=" + APIKey,
-      method: "GET"
-    }).then(function(fiveDayResponse) {
-      getFiveDays(fiveDayResponse);
-    })
+  event.preventDefault();
 
-})
+  var city = $("#search-input").val();
+
+
+  // AJAX call to find the city's co-ordinates
+  $.ajax({
+    url: "http://api.openweathermap.org/geo/1.0/direct?q=" + city + "&limit=1&appid=" + APIKey,
+    method: "GET"
+  }).then(function(coordResponse) {
+    console.log(coordResponse);
+      var cityLat = coordResponse[0].lat;
+      var cityLon = coordResponse[0].lon;
+      //AJAX calls using the coordinates to get the forecast data
+      //for the current weather
+      $.ajax({
+        url: "https://api.openweathermap.org/data/2.5/weather?lat=" + cityLat + "&lon=" + cityLon + "&appid=" + APIKey,
+        method: "GET"
+      }).then(function(currentResponse) {
+        console.log(currentResponse);
+        getCurrentWeather(currentResponse);
+      })
+      //for the next five days
+      $.ajax({
+        url: "http://api.openweathermap.org/data/2.5/forecast?lat=" + cityLat + "&lon=" + cityLon + "&appid=" + APIKey,
+        method: "GET"
+      }).then(function(fiveDayResponse) {
+        getFiveDays(fiveDayResponse);
+      })
+
+  })
+});
 
 //function to display the current weather information
 function getCurrentWeather(data) {
