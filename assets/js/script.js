@@ -2,7 +2,6 @@ var APIKey = "e74bf8be05c5eedb9d4a56d89339e903";
 
 renderSearches();
 
-//TODO add saveSearch function to when search button clicked
 $("#search-button").on("click", function(event) {
   event.preventDefault();
   var city = $("#search-input").val();
@@ -48,12 +47,13 @@ function getCurrentWeather(data) {
   currentWeatherEl.text(cityName + ' ' + currentDate);
   $("#today").append(currentWeatherEl);
   $("#today").append(currentIconEl);
+  $("#today").attr("style", "border:1px solid black; padding-left:10px")
 
   var currentData = [currentTemp, currentHum, currentWind];
   for (var i=0; i<currentData.length; i++){
     var currentContainer = $('<p>');
     currentContainer.append(currentData[i]);
-    $('#today').append(currentContainer);
+    $("#today").append(currentContainer);
   }
 }
 
@@ -66,10 +66,13 @@ function getFiveDays(data) {
       fiveDayArray.push(data.list[i]);
     }
   }
+  var title = $('<h3 class="col-lg-12">5 Day Forecast:</h3>');
+  $("#forecast").append(title);
+
   fiveDayArray.forEach(function(day){
     var dayContainer = $('<div>');
     var date = moment.unix(day.dt).format("DD/MM/YYYY");
-    var dateEl = $('<h3>');
+    var dateEl = $('<h4>');
     dateEl.text(date);
     dayContainer.append(dateEl);
     var dayIconID = day.weather[0].icon;
@@ -77,14 +80,14 @@ function getFiveDays(data) {
     dayContainer.append(dayIconEl);
     var temp =  "Temp: " + (day.main.temp - 273.15).toFixed(1) + "°C";
     var humidity = "Humidity: " + day.main.humidity + "%";
-    var wind = "Wind speed: " + day.wind.speed + " kph";
+    var wind = "Wind: " + day.wind.speed + " kph";
     var daysData = [temp, humidity, wind];
     for (var j=0; j<daysData.length; j++){
       var dayTextContainer = $('<p>');
       dayTextContainer.text(daysData[j]);
       dayContainer.append(dayTextContainer);
     }
-    $('#forecast').append(dayContainer);
+    $("#forecast").append(dayContainer);
   })
 }
 
@@ -97,9 +100,10 @@ function weatherIcon(ID) {
 //function for saving searches
 function saveSearch(city){
   var search = city;
-  var btn = $('<button>');
+  var btn = $("<button>");
+  btn.attr("class", "btn btn-secondary btn-block");
   btn.text(search);
-  $('#history').append(btn);
+  $("#history").append(btn);
   var savedSearches = JSON.parse(localStorage.getItem("searches")) || [];
   savedSearches.push(search);
   localStorage.setItem("searches", JSON.stringify(savedSearches));
@@ -111,9 +115,10 @@ function renderSearches(){
   var savedSearches = JSON.parse(localStorage.getItem("searches"));
   if (savedSearches !== null){
     for (var i=0; i<savedSearches.length; i++){
-      var btn = $('<button>');
+      var btn = $("<button>");
+      btn.attr("class", "btn btn-secondary btn-block");
       btn.text(savedSearches[i]);
-      $('#history').append(btn);
+      $("#history").append(btn);
     }
   }
 }

@@ -1,0 +1,9 @@
+#forecast {
+    justify-content: space-evenly;
+}
+
+#forecast div {
+    color: white;
+    background-color: steelblue;
+    padding: 10px;
+}
