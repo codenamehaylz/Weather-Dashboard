@@ -1,18 +1,18 @@
 var APIKey = "e74bf8be05c5eedb9d4a56d89339e903";
 
+renderSearches();
+
+//TODO add saveSearch function to when search button clicked
 $("#search-button").on("click", function(event) {
-
   event.preventDefault();
-
   var city = $("#search-input").val();
-
+  saveSearch(city);
 
   // AJAX call to find the city's co-ordinates
   $.ajax({
     url: "http://api.openweathermap.org/geo/1.0/direct?q=" + city + "&limit=1&appid=" + APIKey,
     method: "GET"
   }).then(function(coordResponse) {
-    console.log(coordResponse);
       var cityLat = coordResponse[0].lat;
       var cityLon = coordResponse[0].lon;
       //AJAX calls using the coordinates to get the forecast data
@@ -21,7 +21,6 @@ $("#search-button").on("click", function(event) {
         url: "https://api.openweathermap.org/data/2.5/weather?lat=" + cityLat + "&lon=" + cityLon + "&appid=" + APIKey,
         method: "GET"
       }).then(function(currentResponse) {
-        console.log(currentResponse);
         getCurrentWeather(currentResponse);
       })
       //for the next five days
@@ -31,7 +30,6 @@ $("#search-button").on("click", function(event) {
       }).then(function(fiveDayResponse) {
         getFiveDays(fiveDayResponse);
       })
-
   })
 });
 
@@ -94,4 +92,28 @@ function getFiveDays(data) {
 function weatherIcon(ID) {
   var imgURL = "http://openweathermap.org/img/wn/" + ID + "@2x.png";
   return imgURL;
+}
+
+//function for saving searches
+function saveSearch(city){
+  var search = city;
+  var btn = $('<button>');
+  btn.text(search);
+  $('#history').append(btn);
+  var savedSearches = JSON.parse(localStorage.getItem("searches")) || [];
+  savedSearches.push(search);
+  localStorage.setItem("searches", JSON.stringify(savedSearches));
+  console.log(search);
+}
+
+//function to render saved searches onto the page
+function renderSearches(){
+  var savedSearches = JSON.parse(localStorage.getItem("searches"));
+  if (savedSearches !== null){
+    for (var i=0; i<savedSearches.length; i++){
+      var btn = $('<button>');
+      btn.text(savedSearches[i]);
+      $('#history').append(btn);
+    }
+  }
 }
