@@ -2,19 +2,20 @@ var APIKey = "e74bf8be05c5eedb9d4a56d89339e903";
 
 renderSearches();
 
+//Click event for the search button
 $("#search-button").on("click", function(event) {
   event.preventDefault();
   var city = $("#search-input").val();
   saveSearch(city);
 
-  // AJAX call to find the city's co-ordinates
+  //API call to find the city's co-ordinates
   $.ajax({
     url: "http://api.openweathermap.org/geo/1.0/direct?q=" + city + "&limit=1&appid=" + APIKey,
     method: "GET"
   }).then(function(coordResponse) {
       var cityLat = coordResponse[0].lat;
       var cityLon = coordResponse[0].lon;
-      //AJAX calls using the coordinates to get the forecast data
+      //API calls using the coordinates to get the forecast data
       //for the current weather
       $.ajax({
         url: "https://api.openweathermap.org/data/2.5/weather?lat=" + cityLat + "&lon=" + cityLon + "&appid=" + APIKey,
@@ -32,6 +33,37 @@ $("#search-button").on("click", function(event) {
   })
 });
 
+//Click event for the saved search buttons
+$("#history").on("click", ".btn", function(event){
+  $("#today").empty();
+  $("#forecast").empty();
+  var prevCity = $(event.target).text();
+  $.ajax({
+    url: "http://api.openweathermap.org/geo/1.0/direct?q=" + prevCity + "&limit=1&appid=" + APIKey,
+    method: "GET"
+  }).then(function(coordResponse) {
+      var cityLat = coordResponse[0].lat;
+      var cityLon = coordResponse[0].lon;
+      //current weather
+      $.ajax({
+        url: "https://api.openweathermap.org/data/2.5/weather?lat=" + cityLat + "&lon=" + cityLon + "&appid=" + APIKey,
+        method: "GET"
+      }).then(function(currentResponse) {
+        getCurrentWeather(currentResponse);
+      })
+      //next five days
+      $.ajax({
+        url: "http://api.openweathermap.org/data/2.5/forecast?lat=" + cityLat + "&lon=" + cityLon + "&appid=" + APIKey,
+        method: "GET"
+      }).then(function(fiveDayResponse) {
+        getFiveDays(fiveDayResponse);
+      })
+  })
+})
+
+
+//----FUNCTIONS----
+
 //function to display the current weather information
 function getCurrentWeather(data) {
   var cityName = data.name;
@@ -40,9 +72,7 @@ function getCurrentWeather(data) {
   var currentTemp =  "Temp: " + (data.main.temp - 273.15).toFixed(1) + "°C";
   var currentHum = "Humidity: " + data.main.humidity + "%";
   var currentWind = "Wind speed: " + data.wind.speed + " kph";
-
   var currentIconEl = $("<img src=" + weatherIcon(currentIconID) + " style='display:inline'>");
-
   var currentWeatherEl = $("<h2 style='display:inline'>");
   currentWeatherEl.text(cityName + ' ' + currentDate);
   $("#today").append(currentWeatherEl);
@@ -96,6 +126,8 @@ function weatherIcon(ID) {
   var imgURL = "http://openweathermap.org/img/wn/" + ID + "@2x.png";
   return imgURL;
 }
+
+//TODO create if statements to check if city already in saved searches
 
 //function for saving searches
 function saveSearch(city){
