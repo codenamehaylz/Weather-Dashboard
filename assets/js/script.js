@@ -12,7 +12,7 @@ $("#search-button").on("click", function(event) {
 
   //API call to find the city's co-ordinates
   $.ajax({
-    url: "http://api.openweathermap.org/geo/1.0/direct?q=" + city + "&limit=1&appid=" + APIKey,
+    url: "https://api.openweathermap.org/geo/1.0/direct?q=" + city + "&limit=1&appid=" + APIKey,
     method: "GET"
   }).then(function(coordResponse) {
       var cityLat = coordResponse[0].lat;
@@ -27,7 +27,7 @@ $("#search-button").on("click", function(event) {
       })
       //for the next five days
       $.ajax({
-        url: "http://api.openweathermap.org/data/2.5/forecast?lat=" + cityLat + "&lon=" + cityLon + "&appid=" + APIKey,
+        url: "https://api.openweathermap.org/data/2.5/forecast?lat=" + cityLat + "&lon=" + cityLon + "&appid=" + APIKey,
         method: "GET"
       }).then(function(fiveDayResponse) {
         getFiveDays(fiveDayResponse);
@@ -41,7 +41,7 @@ $("#history").on("click", ".btn", function(event){
   $("#forecast").empty();
   var prevCity = $(event.target).text();
   $.ajax({
-    url: "http://api.openweathermap.org/geo/1.0/direct?q=" + prevCity + "&limit=1&appid=" + APIKey,
+    url: "https://api.openweathermap.org/geo/1.0/direct?q=" + prevCity + "&limit=1&appid=" + APIKey,
     method: "GET"
   }).then(function(coordResponse) {
       var cityLat = coordResponse[0].lat;
@@ -55,7 +55,7 @@ $("#history").on("click", ".btn", function(event){
       })
       //next five days
       $.ajax({
-        url: "http://api.openweathermap.org/data/2.5/forecast?lat=" + cityLat + "&lon=" + cityLon + "&appid=" + APIKey,
+        url: "https://api.openweathermap.org/data/2.5/forecast?lat=" + cityLat + "&lon=" + cityLon + "&appid=" + APIKey,
         method: "GET"
       }).then(function(fiveDayResponse) {
         getFiveDays(fiveDayResponse);
