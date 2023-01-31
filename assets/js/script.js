@@ -125,7 +125,7 @@ function getFiveDays(data) {
 
 //function to get weather icon image
 function weatherIcon(ID) {
-  var imgURL = "http://openweathermap.org/img/wn/" + ID + "@2x.png";
+  var imgURL = "https://openweathermap.org/img/wn/" + ID + "@2x.png";
   return imgURL;
 }
 
