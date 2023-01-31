@@ -5,6 +5,8 @@ renderSearches();
 //Click event for the search button
 $("#search-button").on("click", function(event) {
   event.preventDefault();
+  $("#today").empty();
+  $("#forecast").empty();
   var city = $("#search-input").val();
   saveSearch(city);
 
@@ -127,19 +129,27 @@ function weatherIcon(ID) {
   return imgURL;
 }
 
-//TODO create if statements to check if city already in saved searches
-
 //function for saving searches
 function saveSearch(city){
   var search = city;
+  var savedSearches = JSON.parse(localStorage.getItem("searches")) || [];
+  //loop through saved searches and removes duplicate cities
+  for (var i=0; i<savedSearches.length; i++){
+    if (search === savedSearches[i]){
+      savedSearches.splice(i,1);
+      $(".btn").each(function(){
+        if ($(this).text() === search){
+          $(this).remove();
+        }
+      })
+    }
+  }
+  savedSearches.push(search);
+  localStorage.setItem("searches", JSON.stringify(savedSearches));
   var btn = $("<button>");
   btn.attr("class", "btn btn-secondary btn-block");
   btn.text(search);
   $("#history").append(btn);
-  var savedSearches = JSON.parse(localStorage.getItem("searches")) || [];
-  savedSearches.push(search);
-  localStorage.setItem("searches", JSON.stringify(savedSearches));
-  console.log(search);
 }
 
 //function to render saved searches onto the page
